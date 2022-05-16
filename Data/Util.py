@@ -162,7 +162,9 @@ class Util:
                 contourPointsMap1Refine.append(point)
         for point in self.getInterpolatePoints(contourPointsMap1[-1], contourPointsMap1[0]):
             contourPointsMap1Refine.append(point)
-        self.drawContour(contourPointsMap1Refine, self.workImage, self.inputImage)
+        controlPointsInput = [lineUpperStart, pointA1, pointA2, lineUpperEnd]
+        controlPointsOutput = [lineUpperStart, pointA1Rotate, pointA2Rotate, lineUpperEnd]
+        self.drawIt(contourPointsMap1Refine, controlPointsOutput, controlPointsInput, self.workImage, self.inputImage)
         
         controlPointsInput2 = [pointA1, pointA2, pointB1, pointB2]
         controlPointsOutput2 = [pointA1Rotate, pointA2Rotate, pointB1Rotate, pointB2Rotate]
@@ -171,10 +173,10 @@ class Util:
         contourPointsMap2.extend(cutPoints3)
         pointA3B3Mid = (pointA3[0] + pointB3[0]) / 2, (pointA3[1] + pointB3[1]) / 2
         pointA3B3RotateMid = (pointA3Rotate[0] + pointB3Rotate[0]) / 2, (pointA3Rotate[1] + pointB3Rotate[1]) / 2
-        controlPointsInput = [pointA1, pointA3B3Mid, pointB1] if isLeft else [pointA1, pointA3, pointB3, pointB1]
-        #controlPointsInput = [pointA1, pointA3B3Mid, pointB1] if isLeft else self.interpolateCurve(pointA1, pointA3, pointB3, pointB1)
-        controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else [pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate]
-        #controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else self.createCurve(pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate, False)
+        #controlPointsInput = [pointA1, pointA3B3Mid, pointB1] if isLeft else [pointA1, pointA3, pointB3, pointB1]
+        controlPointsInput = [pointA1, pointA3B3Mid, pointB1] if isLeft else self.interpolateCurve(pointA1, pointA3, pointB3, pointB1)
+        #controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else [pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate]
+        controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else self.createCurve(pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate, False)
         
         for index in range(indexA1[0], indexB1[0]):
             point = contourPoints[index]
@@ -184,10 +186,10 @@ class Util:
         contourPointsMap2.extend(cutPoints4)
         pointA4B4Mid = (pointA4[0] + pointB4[0]) / 2, (pointA4[1] + pointB4[1]) / 2
         pointA4B4RotateMid = (pointA4Rotate[0] + pointB4Rotate[0]) / 2, (pointA4Rotate[1] + pointB4Rotate[1]) / 2
-        controlPointsInput = [pointA2, pointA4B4Mid, pointB4] if not isLeft else [pointA2, pointA4, pointB4, pointB2]
-        #controlPointsInput = [pointA2, pointA4B4Mid, pointB4] if not isLeft else self.interpolateCurve(pointA2, pointA4, pointB4, pointB2)
-        controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else [pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate]
-        #controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else self.createCurve(pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, True)
+        #controlPointsInput = [pointA2, pointA4B4Mid, pointB4] if not isLeft else [pointA2, pointA4, pointB4, pointB2]
+        controlPointsInput = [pointA2, pointA4B4Mid, pointB4] if not isLeft else self.interpolateCurve(pointA2, pointA4, pointB4, pointB2)
+        #controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else [pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate]
+        controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else self.createCurve(pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, True)
         
         for index in range(indexB2[0], indexA2[0]):
             point = contourPoints[index]
@@ -223,14 +225,22 @@ class Util:
         return contourPointsMap1Refine, contourPointsMap2Refine, contourPointsMap3Refine
     
     def interpolateCurve(self, pointA2, pointA4, pointB4, pointB2):
-        p1w = int(pointA4[0] * 2 / 3 + pointB4[0] * 1 / 3) 
-        p1h = int(pointA4[1] * 2 / 3 + pointB4[1] * 1 / 3) 
+        p1w = int(pointA4[0] * 4 / 5 + pointB4[0] * 1 / 5) 
+        p1h = int(pointA4[1] * 4 / 5 + pointB4[1] * 1 / 5) 
         p1 = p1w, p1h
 
-        p2w = int(pointA4[0] * 1 / 3 + pointB4[0] * 2 / 3)
-        p2h = int(pointA4[1] * 1 / 3 + pointB4[1] * 2 / 3)
+        p2w = int(pointA4[0] * 3 / 5 + pointB4[0] * 2 / 5)
+        p2h = int(pointA4[1] * 3 / 5 + pointB4[1] * 2 / 5)
         p2 = p2w, p2h
 
+        p3w = int(pointA4[0] * 2 / 5 + pointB4[0] * 3 / 5) 
+        p3h = int(pointA4[1] * 2 / 5 + pointB4[1] * 3 / 5) 
+        p3 = p3w, p3h
+
+        p4w = int(pointA4[0] * 1 / 5 + pointB4[0] * 4 / 5)
+        p4h = int(pointA4[1] * 1 / 5 + pointB4[1] * 4 / 5)
+        p4 = p4w, p4h
+        
         # self.workImage[pointA2[1], pointA2[0]] = (0, 0, 255)
         # self.workImage[pointA2[1], pointA2[0]+1] = (0, 0, 255)
         # self.workImage[pointA2[1]+1, pointA2[0]] = (0, 0, 255)
@@ -255,7 +265,7 @@ class Util:
         # self.workImage[p2h, p2w+1] = (0, 255, 0)
         # self.workImage[p2h+1, p2w] = (0, 255, 0)
         
-        return [pointA2, pointA4, p1, p2, pointB4, pointB2]
+        return [pointA2, pointA4, p1, p2, p3, p4, pointB4, pointB2]
     
     def createCurve(self, pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, isLeft):
         direction = (pointB4Rotate[0] - pointA4Rotate[0]), (pointB4Rotate[1] - pointA4Rotate[1])      
@@ -266,14 +276,21 @@ class Util:
         else:
             normal = -direction[1] / length, direction[0] / length 
         
-        p1w = int(pointA4Rotate[0] * 2 / 3 + pointB4Rotate[0] * 1 / 3 + normal[0] * 5)
-        p1h = int(pointA4Rotate[1] * 2 / 3 + pointB4Rotate[1] * 1 / 3 + normal[1] * 5)
+        p1w = int(pointA4Rotate[0] * 2 / 3 + pointB4Rotate[0] * 1 / 3 + normal[0] * 3)
+        p1h = int(pointA4Rotate[1] * 2 / 3 + pointB4Rotate[1] * 1 / 3 + normal[1] * 3)
         p1 = p1w, p1h
 
         p2w = int(pointA4Rotate[0] * 1 / 3 + pointB4Rotate[0] * 2 / 3 + normal[0] * 5)
         p2h = int(pointA4Rotate[1] * 1 / 3 + pointB4Rotate[1] * 2 / 3 + normal[1] * 5)
         p2 = p2w, p2h
         
+        p3w = int(pointA4Rotate[0] * 2 / 5 + pointB4Rotate[0] * 3 / 5 + normal[0] * 5) 
+        p3h = int(pointA4Rotate[1] * 2 / 5 + pointB4Rotate[1] * 3 / 5 + normal[1] * 5) 
+        p3 = p3w, p3h
+
+        p4w = int(pointA4Rotate[0] * 1 / 5 + pointB4Rotate[0] * 4 / 5 + normal[0] * 3)
+        p4h = int(pointA4Rotate[1] * 1 / 5 + pointB4Rotate[1] * 4 / 5 + normal[1] * 3)
+        p4 = p4w, p4h
         # self.workImage[p1h, p1w] = (0, 255, 0)
         # self.workImage[p1h, p1w+1] = (0, 255, 0)
         # self.workImage[p1h+1, p1w] = (0, 255, 0)
@@ -281,7 +298,7 @@ class Util:
         # self.workImage[p2h, p2w+1] = (0, 255, 0)
         # self.workImage[p2h+1, p2w] = (0, 255, 0)
         
-        return [pointA2Rotate, pointA4Rotate, p1, p2, pointB4Rotate, pointB2Rotate]
+        return [pointA2Rotate, pointA4Rotate, p1, p2, p3, p4, pointB4Rotate, pointB2Rotate]
     
     def drawIt(self, contourPointsMap, controlPointsInput, controlPointsOutput, workImage, inputImage):
         hMin = self.inHeight
