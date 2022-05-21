@@ -83,23 +83,6 @@ class Util:
         w4 = int((lineUpperEnd[0] - lineUpperStart[0]) / 2) + pointA2[0]
         h4 = int((lineUpperEnd[1] - lineUpperStart[1]) / 2) + pointA2[1]
         pointA4 = w4, h4       
-
-        
-        # self.workImage[pointA1[1], pointA1[0]] = (0, 0, 255)
-        # self.workImage[pointA1[1], pointA1[0]+1] = (0, 0, 255)
-        # self.workImage[pointA1[1]+1, pointA1[0]] = (0, 0, 255)
-
-        # self.workImage[pointA2[1], pointA2[0]] = (0, 0, 255)
-        # self.workImage[pointA2[1], pointA2[0]+1] = (0, 0, 255)
-        # self.workImage[pointA2[1]+1, pointA2[0]] = (0, 0, 255)
-        
-        # self.workImage[h3, w3] = (0, 0, 255)
-        # self.workImage[h3, w3+1] = (0, 0, 255)
-        # self.workImage[h3+1, w3] = (0, 0, 255)
-        
-        # self.workImage[h4, w4] = (0, 0, 255)
-        # self.workImage[h4, w4+1] = (0, 0, 255)
-        # self.workImage[h4+1, w4] = (0, 0, 255)
         
         #lower control points
         lineLowerStart, lineLowerEnd = lineLower
@@ -146,15 +129,23 @@ class Util:
         
         contourPointsMap1 = []
         contourPointsMap1.extend(cutPoints)
+        
+        controlPointsInput = [contourPoints[indexUpperEnd[0]], contourPoints[indexUpperStart[0]], pointA1]
+        controlPointsOutput = [contourPoints[indexUpperEnd[0]], contourPoints[indexUpperStart[0]], pointA1Rotate]
         for index in range(indexUpperStart[0], indexA1[0]):
             point = contourPoints[index]
-            pointMap = self.rotatePoint(point, lineUpperStart, angleUpper)
+            #pointMap = self.rotatePoint(point, lineUpperStart, angleUpper)
+            pointMap = self.mapPoint(point, controlPointsInput, controlPointsOutput)
             contourPointsMap1.append(pointMap)
         cutPoints2 = self.getInterpolatePoints(pointA1Rotate, pointA2Rotate)
         contourPointsMap1.extend(cutPoints2)
+        
+        controlPointsInput = [contourPoints[indexUpperEnd[0]], contourPoints[indexUpperStart[0]], pointA2]
+        controlPointsOutput = [contourPoints[indexUpperEnd[0]], contourPoints[indexUpperStart[0]], pointA2Rotate]
         for index in range(indexA2[0], indexUpperEnd[0]):
             point = contourPoints[index]
-            pointMap = self.rotatePoint(point, lineUpperStart, angleUpper)
+            #pointMap = self.rotatePoint(point, lineUpperStart, angleUpper)
+            pointMap = self.mapPoint(point, controlPointsInput, controlPointsOutput)
             contourPointsMap1.append(pointMap)
         contourPointsMap1Refine = []
         for i in range(0, len(contourPointsMap1) - 1):
@@ -162,9 +153,10 @@ class Util:
                 contourPointsMap1Refine.append(point)
         for point in self.getInterpolatePoints(contourPointsMap1[-1], contourPointsMap1[0]):
             contourPointsMap1Refine.append(point)
-        controlPointsInput = [lineUpperStart, pointA1, pointA2, lineUpperEnd]
-        controlPointsOutput = [lineUpperStart, pointA1Rotate, pointA2Rotate, lineUpperEnd]
-        self.drawIt(contourPointsMap1Refine, controlPointsOutput, controlPointsInput, self.workImage, self.inputImage)
+            
+        controlPointsInput = [contourPoints[indexUpperEnd[0]], contourPoints[indexUpperStart[0]], pointA1, pointA2]
+        controlPointsOutput = [contourPoints[indexUpperEnd[0]], contourPoints[indexUpperStart[0]], pointA1Rotate, pointA2Rotate]
+        self.drawIt(contourPointsMap1Refine, controlPointsInput, controlPointsOutput, self.workImage, self.inputImage)
         
         controlPointsInput2 = [pointA1, pointA2, pointB1, pointB2]
         controlPointsOutput2 = [pointA1Rotate, pointA2Rotate, pointB1Rotate, pointB2Rotate]
@@ -221,7 +213,7 @@ class Util:
         for point in self.getInterpolatePoints(contourPointsMap3[-1], contourPointsMap3[0]):
             contourPointsMap3Refine.append(point)
         self.drawUpperContour(contourPointsMap3Refine, controlPointsOutput, controlPointsInput)        
-            
+        
         return contourPointsMap1Refine, contourPointsMap2Refine, contourPointsMap3Refine
     
     def interpolateCurve(self, pointA2, pointA4, pointB4, pointB2):
@@ -250,29 +242,6 @@ class Util:
         p6w = int(pointA4[0] * 1 / n + pointB4[0] * 6 / n)
         p6h = int(pointA4[1] * 1 / n + pointB4[1] * 6 / n)
         p6 = p6w, p6h
-        # self.workImage[pointA2[1], pointA2[0]] = (0, 0, 255)
-        # self.workImage[pointA2[1], pointA2[0]+1] = (0, 0, 255)
-        # self.workImage[pointA2[1]+1, pointA2[0]] = (0, 0, 255)
-
-        # self.workImage[pointB2[1], pointB2[0]] = (0, 0, 255)
-        # self.workImage[pointB2[1], pointB2[0]+1] = (0, 0, 255)
-        # self.workImage[pointB2[1]+1, pointB2[0]] = (0, 0, 255)
-        
-        # self.workImage[pointA4[1], pointA4[0]] = (0, 0, 255)
-        # self.workImage[pointA4[1], pointA4[0]+1] = (0, 0, 255)
-        # self.workImage[pointA4[1]+1, pointA4[0]] = (0, 0, 255)
-
-        # self.workImage[pointB4[1], pointB4[0]] = (0, 0, 255)
-        # self.workImage[pointB4[1], pointB4[0]+1] = (0, 0, 255)
-        # self.workImage[pointB4[1]+1, pointB4[0]] = (0, 0, 255)
-        
-        # self.workImage[p1h, p1w] = (0, 255, 0)
-        # self.workImage[p1h, p1w+1] = (0, 255, 0)
-        # self.workImage[p1h+1, p1w] = (0, 255, 0)
-        
-        # self.workImage[p2h, p2w] = (0, 255, 0)
-        # self.workImage[p2h, p2w+1] = (0, 255, 0)
-        # self.workImage[p2h+1, p2w] = (0, 255, 0)
         
         return [pointA2, pointA4, p1, p2, p3, p4, p5, p6, pointB4, pointB2]
     
@@ -309,12 +278,6 @@ class Util:
         p6w = int(pointA4Rotate[0] * 1 / n + pointB4Rotate[0] * 6 / n + normal[0] * 1)
         p6h = int(pointA4Rotate[1] * 1 / n + pointB4Rotate[1] * 6 / n + normal[1] * 1)
         p6 = p6w, p6h        
-        # self.workImage[p1h, p1w] = (0, 255, 0)
-        # self.workImage[p1h, p1w+1] = (0, 255, 0)
-        # self.workImage[p1h+1, p1w] = (0, 255, 0)
-        # self.workImage[p2h, p2w] = (0, 255, 0)
-        # self.workImage[p2h, p2w+1] = (0, 255, 0)
-        # self.workImage[p2h+1, p2w] = (0, 255, 0)
         
         return [pointA2Rotate, pointA4Rotate, p1, p2, p3, p4, p5, p6, pointB4Rotate, pointB2Rotate]
     
@@ -338,6 +301,7 @@ class Util:
                 wMin = w
               if w > wMax:
                 wMax = w
+        
           for w in range(wMin, wMax):
             ww, hh = self.mapPoint((w, h), controlPointsOutput, controlPointsInput)
             workImage[h, w] = inputImage[hh, ww]          

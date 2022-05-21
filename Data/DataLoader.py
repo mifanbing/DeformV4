@@ -18,8 +18,8 @@ class DataLoader:
       (0.442,	0.66), # 8: left waist
       (0.436,	0.751), # 9: left knee
       (0.415,	0.933), # 10: left foot
-      (0.520,	0.70), # 11: right waist
-      (0.525,	0.774), # 12: right knee
+      (0.520,	0.65), # 11: right waist
+      (0.525,	0.724), # 12: right knee
       (0.507,	0.933)] # 13: right foot
     
     def __init__(self, inWidth, inHeight, imageName):  
