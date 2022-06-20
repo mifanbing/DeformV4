@@ -166,9 +166,11 @@ class Util:
         pointA3B3Mid = (pointA3[0] + pointB3[0]) / 2, (pointA3[1] + pointB3[1]) / 2
         pointA3B3RotateMid = (pointA3Rotate[0] + pointB3Rotate[0]) / 2, (pointA3Rotate[1] + pointB3Rotate[1]) / 2
         #controlPointsInput = [pointA1, pointA3B3Mid, pointB1] if isLeft else [pointA1, pointA3, pointB3, pointB1]
-        controlPointsInput = [pointA1, pointA3B3Mid, pointB1] if isLeft else self.interpolateCurve(pointA1, pointA3, pointB3, pointB1)
+        controlPointsInput = self.createBezierCurve([pointA1, pointA3B3Mid, pointB1]) if isLeft else self.createBezierCurve([pointA1, pointA3, pointB3, pointB1])
+        
         #controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else [pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate]
-        controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else self.createCurve(pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate, False)
+        #controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else self.createCurve(pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate, False)
+        controlPointsInputRotate = self.createBezierCurve([pointA1Rotate, pointA3B3RotateMid, pointB1Rotate]) if isLeft else self.createBezierCurve([pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate])
         
         for index in range(indexA1[0], indexB1[0]):
             point = contourPoints[index]
@@ -179,9 +181,10 @@ class Util:
         pointA4B4Mid = (pointA4[0] + pointB4[0]) / 2, (pointA4[1] + pointB4[1]) / 2
         pointA4B4RotateMid = (pointA4Rotate[0] + pointB4Rotate[0]) / 2, (pointA4Rotate[1] + pointB4Rotate[1]) / 2
         #controlPointsInput = [pointA2, pointA4B4Mid, pointB4] if not isLeft else [pointA2, pointA4, pointB4, pointB2]
-        controlPointsInput = [pointA2, pointA4B4Mid, pointB4] if not isLeft else self.interpolateCurve(pointA2, pointA4, pointB4, pointB2)
+        controlPointsInput = self.createBezierCurve([pointA2, pointA4B4Mid, pointB4]) if not isLeft else self.createBezierCurve([pointA2, pointA4, pointB4, pointB2])
         #controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else [pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate]
-        controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else self.createCurve(pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, True)
+        #controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else self.createCurve(pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, True)
+        controlPointsInputRotate = self.createBezierCurve([pointA2Rotate, pointA4B4RotateMid, pointB4Rotate]) if not isLeft else self.createBezierCurve([pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate])
         
         for index in range(indexB2[0], indexA2[0]):
             point = contourPoints[index]
@@ -215,71 +218,35 @@ class Util:
         self.drawUpperContour(contourPointsMap3Refine, controlPointsOutput, controlPointsInput)        
         
         return contourPointsMap1Refine, contourPointsMap2Refine, contourPointsMap3Refine
-    
-    def interpolateCurve(self, pointA2, pointA4, pointB4, pointB2):
-        n = 7
-        
-        p1w = int(pointA4[0] * 6 / n + pointB4[0] * 1 / n) 
-        p1h = int(pointA4[1] * 6 / n + pointB4[1] * 1 / n) 
-        p1 = p1w, p1h
 
-        p2w = int(pointA4[0] * 5 / n + pointB4[0] * 2 / n)
-        p2h = int(pointA4[1] * 5 / n + pointB4[1] * 2 / n)
-        p2 = p2w, p2h
-
-        p3w = int(pointA4[0] * 4 / n + pointB4[0] * 3 / n) 
-        p3h = int(pointA4[1] * 4 / n + pointB4[1] * 3 / n) 
-        p3 = p3w, p3h
-
-        p4w = int(pointA4[0] * 3 / n + pointB4[0] * 4 / n)
-        p4h = int(pointA4[1] * 3 / n + pointB4[1] * 4 / n)
-        p4 = p4w, p4h
- 
-        p5w = int(pointA4[0] * 2 / n + pointB4[0] * 5 / n)
-        p5h = int(pointA4[1] * 2 / n + pointB4[1] * 5 / n)
-        p5 = p5w, p5h
+    def createBezierCurve(self, controlPoints):
+        tList = []
+        space = 20
+        for i in range(space + 1):
+            tList.append(float(i / space))
         
-        p6w = int(pointA4[0] * 1 / n + pointB4[0] * 6 / n)
-        p6h = int(pointA4[1] * 1 / n + pointB4[1] * 6 / n)
-        p6 = p6w, p6h
+        curvePoints = []
+        if len(controlPoints) == 2:
+            w1, h1 = controlPoints[0]
+            w2, h2 = controlPoints[1]
+            for t in tList:
+                w = w1 * (1 - t) + w2 * t
+                h = h1 * (1 - t) + h2 * t
+                curvePoints.append((w, h))
+            return curvePoints
         
-        return [pointA2, pointA4, p1, p2, p3, p4, p5, p6, pointB4, pointB2]
-    
-    def createCurve(self, pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, isLeft):
-        direction = (pointB4Rotate[0] - pointA4Rotate[0]), (pointB4Rotate[1] - pointA4Rotate[1])      
-        length = math.sqrt(direction[0] ** 2 + direction[1] ** 2)
+        points1 = self.createBezierCurve(controlPoints[0:-1])
+        points2 = self.createBezierCurve(controlPoints[1:])
         
-        if isLeft:
-            normal = direction[1] / length, -direction[0] / length
-        else:
-            normal = -direction[1] / length, direction[0] / length 
+        for i in range(space + 1):
+            t = tList[i]
+            w1, h1 = points1[i]
+            w2, h2 = points2[i]
+            w = w1 * (1 - t) + w2 * t
+            h = h1 * (1 - t) + h2 * t
+            curvePoints.append((w, h))
         
-        n = 7
-        p1w = int(pointA4Rotate[0] * 6 / n + pointB4Rotate[0] * 1 / n + normal[0] * 1)
-        p1h = int(pointA4Rotate[1] * 6 / n + pointB4Rotate[1] * 1 / n + normal[1] * 1)
-        p1 = p1w, p1h
-
-        p2w = int(pointA4Rotate[0] * 5 / n + pointB4Rotate[0] * 2 / n + normal[0] * 7)
-        p2h = int(pointA4Rotate[1] * 5 / n + pointB4Rotate[1] * 2 / n + normal[1] * 7)
-        p2 = p2w, p2h
-        
-        p3w = int(pointA4Rotate[0] * 4 / n + pointB4Rotate[0] * 3 / n + normal[0] * 11) 
-        p3h = int(pointA4Rotate[1] * 4 / n + pointB4Rotate[1] * 3 / n + normal[1] * 11) 
-        p3 = p3w, p3h
-
-        p4w = int(pointA4Rotate[0] * 3 / n + pointB4Rotate[0] * 4 / n + normal[0] * 11)
-        p4h = int(pointA4Rotate[1] * 3 / n + pointB4Rotate[1] * 4 / n + normal[1] * 11)
-        p4 = p4w, p4h
-        
-        p5w = int(pointA4Rotate[0] * 2 / n + pointB4Rotate[0] * 5 / n + normal[0] * 7) 
-        p5h = int(pointA4Rotate[1] * 2 / n + pointB4Rotate[1] * 5 / n + normal[1] * 7) 
-        p5 = p5w, p5h
-
-        p6w = int(pointA4Rotate[0] * 1 / n + pointB4Rotate[0] * 6 / n + normal[0] * 1)
-        p6h = int(pointA4Rotate[1] * 1 / n + pointB4Rotate[1] * 6 / n + normal[1] * 1)
-        p6 = p6w, p6h        
-        
-        return [pointA2Rotate, pointA4Rotate, p1, p2, p3, p4, p5, p6, pointB4Rotate, pointB2Rotate]
+        return curvePoints
     
     def drawIt(self, contourPointsMap, controlPointsInput, controlPointsOutput, workImage, inputImage):
         hMin = self.inHeight
