@@ -40,7 +40,7 @@ contourPointsMap1Refine, contourPointsMap2Refine, contourPointsMap3Refine = util
 #     ww, hh = point
 #     workImage[hh, ww] = (255, 0, 0)
     
-contourPointsMap1Refine, contourPointsMap2Refine, contourPointsMap3Refine = util.deform(inputContourPointsRefine, poseLines[5], poseLines[6], -math.pi/8, -math.pi/2, False)  
+contourPointsMap1Refine, contourPointsMap2Refine, contourPointsMap3Refine = util.deform(inputContourPointsRefine, poseLines[5], poseLines[6], -math.pi/8, -math.pi/1.7, False)  
 # for point in contourPointsMap1Refine:
 #     ww, hh = point
 #     workImage[hh, ww] = (0, 0, 255)
