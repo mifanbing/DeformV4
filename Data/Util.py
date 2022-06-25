@@ -170,7 +170,7 @@ class Util:
         
         #controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else [pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate]
         #controlPointsInputRotate = [pointA1Rotate, pointA3B3RotateMid, pointB1Rotate] if isLeft else self.createCurve(pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate, False)
-        controlPointsInputRotate = self.createBezierCurve([pointA1Rotate, pointA3B3RotateMid, pointB1Rotate]) if isLeft else self.createBezierCurve([pointA1Rotate, pointA3Rotate, pointB3Rotate, pointB1Rotate])
+        controlPointsInputRotate = self.createBezierCurve([pointA1Rotate, pointA3B3RotateMid, pointB1Rotate]) if isLeft else self.createBezierCurve([pointA1Rotate, pointA3Rotate, pointA3Rotate, pointB3Rotate, pointB3Rotate, pointB1Rotate])
         
         for index in range(indexA1[0], indexB1[0]):
             point = contourPoints[index]
@@ -184,7 +184,7 @@ class Util:
         controlPointsInput = self.createBezierCurve([pointA2, pointA4B4Mid, pointB4]) if not isLeft else self.createBezierCurve([pointA2, pointA4, pointB4, pointB2])
         #controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else [pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate]
         #controlPointsInputRotate = [pointA2Rotate, pointA4B4RotateMid, pointB4Rotate] if not isLeft else self.createCurve(pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate, True)
-        controlPointsInputRotate = self.createBezierCurve([pointA2Rotate, pointA4B4RotateMid, pointB4Rotate]) if not isLeft else self.createBezierCurve([pointA2Rotate, pointA4Rotate, pointB4Rotate, pointB2Rotate])
+        controlPointsInputRotate = self.createBezierCurve([pointA2Rotate, pointA4B4RotateMid, pointB4Rotate]) if not isLeft else self.createBezierCurve([pointA2Rotate, pointA4Rotate, pointA4Rotate, pointB4Rotate, pointB4Rotate, pointB2Rotate])
         
         for index in range(indexB2[0], indexA2[0]):
             point = contourPoints[index]
